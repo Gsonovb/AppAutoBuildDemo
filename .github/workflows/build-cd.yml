@@ -21,7 +21,7 @@ on:
 
 jobs:
   build-cd-publish:
-    needs: build-ci
+
     runs-on: ubuntu-latest
 
     strategy:
