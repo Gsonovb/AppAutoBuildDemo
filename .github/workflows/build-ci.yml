@@ -8,11 +8,7 @@ on:
       - "**/*.gitignore"
       - "**/*.gitattributes"
   workflow_dispatch:
-    branches:
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.gitignore"
-      - "**/*.gitattributes"
+
 
 jobs:
   build-ci:

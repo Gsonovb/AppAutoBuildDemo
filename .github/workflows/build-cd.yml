@@ -11,13 +11,6 @@ on:
       - "**/*.gitattributes"
 
   workflow_dispatch:
-    branches:
-    tags:
-      - "v*"
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.gitignore"
-      - "**/*.gitattributes"
 
 jobs:
   build-cd-publish:
