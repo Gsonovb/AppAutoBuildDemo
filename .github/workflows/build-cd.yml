@@ -4,7 +4,6 @@ on:
   push:
     branches:
     tags:
-      - "v*"
     paths-ignore:
       - "**/*.md"
       - "**/*.gitignore"
@@ -50,7 +49,7 @@ jobs:
           automatic_release_tag: latest-${{ matrix.RuntimeIdentifier }}
           title: "${{ github.run_id }}-${{ github.run_number }}"
           prerelease: true
-          files: ./publish/*.zip
+          files: ../publish/*.zip
 
   build-cd-upload:
     needs: build-cd-publish
