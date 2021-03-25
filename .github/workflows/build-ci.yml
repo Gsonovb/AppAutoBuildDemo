@@ -3,8 +3,6 @@ name: build-ci
 on:
   push:
     branches:
-    tags-ignore:
-      - "*"
     paths-ignore:
       - "**/*.md"
       - "**/*.gitignore"
