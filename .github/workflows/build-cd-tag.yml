@@ -5,11 +5,9 @@ on:
     tags:
       - "v*"
 
-  workflow_dispatch:
 
 jobs:
   build-cd-publish:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,7 +26,7 @@ jobs:
           dotnet-version: 5.0.x
 
       - name: Build
-        run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier 
+        run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier
         env:
           RuntimeIdentifier: ${{ matrix.RuntimeIdentifier }}
 
@@ -69,6 +67,7 @@ jobs:
         shell: pwsh
         env:
           publishdir: ./publish
+          tag: ${{github.ref}}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:

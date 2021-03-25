@@ -10,6 +10,8 @@ $version = "";
 #FileName Prefix
 $prefix = "apptool";
 
+#Git Tag
+$tag ="";
 
 Write-Host "System Info:"
 $PSVersionTable
@@ -28,6 +30,10 @@ if ($env:prefix -ne $null ) {
     $prefix = $env:prefix
 }
 
+if ($env:tag -ne $null ) {
+    $tag = $env:tag
+}
+
 
 if ($args -ne $null ) {
     foreach ($arg in $args) {
@@ -40,6 +46,9 @@ if ($args -ne $null ) {
         }
         elseif ($arg.StartsWith("prefix:", [StringComparison]::InvariantCultureIgnoreCase)) {
             $prefix = $arg.Substring("prefix:".Length)
+        }
+        elseif ($arg.StartsWith("tag:", [StringComparison]::InvariantCultureIgnoreCase)) {
+            $tag = $arg.Substring("tag:".Length)
         }
     }
 }
@@ -54,8 +63,9 @@ else {
     
     $dirs = Get-ChildItem -Path $publishdir -Directory
 
-    if ([string]::IsNullOrEmpty($version)) {
-        $version = ""
+
+    if ([string]::IsNullOrEmpty($version) -and ($tag.StartsWith("refs/tags/"))) {
+        $version = "-" + $tag.Replace("refs/tags/","")
     }
     else {
         $version = "-" + $version
