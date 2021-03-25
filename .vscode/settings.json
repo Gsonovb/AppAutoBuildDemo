@@ -1,0 +1,7 @@
+{
+    "git.autofetch": true,
+    "git.autofetchPeriod": 1800,
+    "git.followTagsWhenSync": true,
+    "git.pullTags": false,
+    "git.showPushSuccessNotification": true
+}
