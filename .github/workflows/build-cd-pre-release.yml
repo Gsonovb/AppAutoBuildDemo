@@ -25,6 +25,9 @@ jobs:
     #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
     runs-on: ubuntu-latest
 
+    env:
+      MINVERBUILDMETADATA: ${{github.run_id}}
+
     strategy:
       matrix:
         RuntimeIdentifier:

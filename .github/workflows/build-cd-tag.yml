@@ -9,6 +9,8 @@ on:
 jobs:
   build-cd-publish:
     runs-on: ubuntu-latest
+    env:
+      MINVERBUILDMETADATA: ${{github.run_id}}
 
     strategy:
       matrix:
