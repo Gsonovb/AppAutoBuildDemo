@@ -1,17 +1,27 @@
 name: build-cd-pre-release
 
 on:
+  # schedule:
+  #   # every week sunday
+  #   - cron:  '0 0 * * 0'
+
   push:
     branches:
     tags-ignore:
       - "*"
 
   workflow_dispatch:
+    inputs:
+      name:
+        description: "Build alias"
+        required: true
+        default: "Preview"
+
 
 jobs:
   build-cd-publish:
     #if: github.ref == 'refs/heads/main'
-    #windows-latest 
+    #windows-latest
     #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
     runs-on: ubuntu-latest
 
@@ -31,7 +41,7 @@ jobs:
           dotnet-version: 5.0.x
 
       - name: Build
-        run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier 
+        run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier
         env:
           RuntimeIdentifier: ${{ matrix.RuntimeIdentifier }}
 
@@ -41,8 +51,6 @@ jobs:
           name: ${{matrix.RuntimeIdentifier}}
           retention-days: 1
           path: ./publish/${{matrix.RuntimeIdentifier}}/*
-
-
 
   build-cd-upload:
     needs: build-cd-publish
@@ -66,6 +74,7 @@ jobs:
         shell: pwsh
         env:
           publishdir: ./publish
+          prefix:  ${{ github.event.inputs.name }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:

@@ -11,7 +11,7 @@ $version = "";
 $prefix = "apptool";
 
 #Git Tag
-$tag ="";
+$tag = "";
 
 Write-Host "System Info:"
 $PSVersionTable
@@ -65,7 +65,10 @@ else {
 
 
     if ([string]::IsNullOrEmpty($version) -and ($tag.StartsWith("refs/tags/"))) {
-        $version = "-" + $tag.Replace("refs/tags/","")
+        $version = "-" + $tag.Replace("refs/tags/", "")
+    }
+    elseif ([string]::IsNullOrEmpty($version)) {
+        $version = ""
     }
     else {
         $version = "-" + $version
