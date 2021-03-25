@@ -15,7 +15,7 @@ on:
       name:
         description: "Build alias"
         required: true
-        default: "Preview"
+        default: "apptool"
 
 
 jobs:
