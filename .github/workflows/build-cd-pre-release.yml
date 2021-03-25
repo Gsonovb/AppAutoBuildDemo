@@ -10,7 +10,9 @@ on:
 
 jobs:
   build-cd-publish:
-
+    #if: github.ref == 'refs/heads/main'
+    #windows-latest 
+    #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
     runs-on: ubuntu-latest
 
     strategy:
@@ -40,13 +42,7 @@ jobs:
           retention-days: 1
           path: ./publish/${{matrix.RuntimeIdentifier}}/*
 
-      # - uses: "marvinpinto/action-automatic-releases@latest"
-      #   with:
-      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     automatic_release_tag: latest
-      #     title: "${{ github.run_id }}-${{ github.run_number }}"
-      #     prerelease: true
-      #     files: ./publish/*.zip
+
 
   build-cd-upload:
     needs: build-cd-publish
@@ -74,7 +70,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          #automatic_release_tag: "latest"
+          automatic_release_tag: "preview"
           title: "Auto Build ${{ github.run_id }}-${{ github.run_number }}"
           prerelease: true
           files: ./publish/*.zip
