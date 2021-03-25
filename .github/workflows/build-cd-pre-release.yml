@@ -7,6 +7,7 @@ on:
 
   push:
     branches:
+      - "*"
     tags-ignore:
       - "*"
 
@@ -44,6 +45,7 @@ jobs:
         run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier
         env:
           RuntimeIdentifier: ${{ matrix.RuntimeIdentifier }}
+          MINVERBUILDMETADATA: ${{github.run_id}}
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
