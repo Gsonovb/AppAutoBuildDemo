@@ -75,5 +75,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           #automatic_release_tag: latest
           #title:
-          #prerelease: true
+          prerelease: false
           files: ./publish/*.zip
