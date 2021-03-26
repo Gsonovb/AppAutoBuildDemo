@@ -35,7 +35,11 @@ jobs:
     steps:
       - run: echo "GITHUB_REF  $GITHUB_REF GITHUB_EVENT_NAME $GITHUB_EVENT_NAME  GITHUB_SHA $GITHUB_SHA GITHUB_ACTION $GITHUB_ACTION   GITHUB_RUN_ID $GITHUB_RUN_ID GITHUB_RUN_NUMBER $GITHUB_RUN_NUMBER"
 
-      - uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
