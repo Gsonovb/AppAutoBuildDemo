@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
@@ -7,8 +6,7 @@
     <FileVersion>2.2.2.2</FileVersion>
     <Version>3.3.3.3-xyz</Version> -->
   </PropertyGroup>
-
   <PropertyGroup>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 </Project>
