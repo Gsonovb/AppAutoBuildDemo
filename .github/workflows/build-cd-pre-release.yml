@@ -53,7 +53,8 @@ jobs:
           versionSpec: '5.x'
 
       - name: Display GitVersion config
-        uses: gittools/actions/gitversion/execute@v0.9.7
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.9
         with:
           useConfigFile: true
           additionalArguments: '/updateprojectfiles'
@@ -102,7 +103,7 @@ jobs:
 
   build-cd-publish:
     needs: build-ci
-    if: github.ref == 'refs/heads/main'
+    #if: github.ref == 'refs/heads/main'
     
     #windows-latest
     #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
@@ -133,7 +134,7 @@ jobs:
           versionSpec: '5.x'
 
       - name: Display GitVersion config
-        uses: gittools/actions/gitversion/execute@v0.9.7
+        uses: gittools/actions/gitversion/execute@v0.9.9
         with:
           useConfigFile: true
           additionalArguments: '/updateprojectfiles'
@@ -188,7 +189,7 @@ jobs:
 
   build-cd-upload:
     needs: [build-ci,build-cd-publish]
-    if: github.ref == 'refs/heads/main'
+    #if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
