@@ -10,6 +10,12 @@ jobs:
   build-cd-publish:
     runs-on: ubuntu-latest
 
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
+      ShortSha: ${{ steps.gitversion.outputs.ShortSha }}
+      MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}
+
     strategy:
       matrix:
         RuntimeIdentifier:
@@ -28,6 +34,19 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
+
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.9
+        with:
+          versionSpec: '5.x'
+
+      - name: Display GitVersion config
+        uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+          useConfigFile: true
+          additionalArguments: '/updateprojectfiles'
+
 
       - name: Build
         run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier
@@ -71,12 +90,13 @@ jobs:
         shell: pwsh
         env:
           publishdir: ./publish
-          tag: ${{github.ref}}
+          #tag: ${{github.ref}}
+          version:  ${{ needs.build-cd-publish.outputs.semVer }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           #automatic_release_tag: latest
-          #title:
+          #title: "v${{ needs.build-ci.outputs.semVer }}"
           prerelease: false
           files: ./publish/*.zip
