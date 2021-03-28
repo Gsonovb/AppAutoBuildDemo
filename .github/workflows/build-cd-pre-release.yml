@@ -13,35 +13,24 @@ on:
 
   workflow_dispatch:
     inputs:
-      name:
-        description: "Build alias"
+      versionSpec:
+        description: Required version in the form of 5.x or exact version like 5.0.0.
         required: true
-        default: "apptool"
-    versionSpec:
-      description: Required version in the form of 5.x or exact version like 5.0.0.
-      required: true
-      default: "5.x"
-    includePrerelease:
-      description: Include pre-release versions when matching a version.
-      required: false
-      default: false
-
+        default: "5.x"
+      includePrerelease:
+        description: Include pre-release versions when matching a version.
+        required: false
+        default: false
 
 jobs:
   build-ci:
     runs-on: ubuntu-latest
-    outputs:
-      semVer: ${{ steps.gitversion.outputs.semVer }}
-      FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
-      ShortSha: ${{ steps.gitversion.outputs.ShortSha }}
-      MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
@@ -50,14 +39,14 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.9
         with:
-          versionSpec: '5.x'
+          versionSpec: "5.x"
 
       - name: Display GitVersion config
         id: gitversion
         uses: gittools/actions/gitversion/execute@v0.9.9
         with:
           useConfigFile: true
-          additionalArguments: '/updateprojectfiles'
+          additionalArguments: "/updateprojectfiles"
 
       - name: Display GitVersion outputs
         run: |
@@ -100,20 +89,26 @@ jobs:
       - name: Build
         run: cd src && dotnet build --no-restore
 
-
   build-cd-publish:
     needs: build-ci
+    #if: ${{ startsWith(github.ref,'refs/heads/main') || startsWith(github.ref,'refs/heads/release') }}
     #if: github.ref == 'refs/heads/main'
-    
+
     #windows-latest
     #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
+      ShortSha: ${{ steps.gitversion.outputs.ShortSha }}
+      PreReleaseLabel: ${{ steps.gitversion.outputs.PreReleaseLabel }}
+      MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}
 
     strategy:
       matrix:
         RuntimeIdentifier:
-          [win-x64, win-x86]
-          #, linux-x64, linux-musl-x64, linux-arm, linux-arm64
+          [win-x64, win-x86, linux-x64, linux-musl-x64, linux-arm, linux-arm64]
 
     steps:
       - run: echo "GITHUB_REF  $GITHUB_REF GITHUB_EVENT_NAME $GITHUB_EVENT_NAME  GITHUB_SHA $GITHUB_SHA GITHUB_ACTION $GITHUB_ACTION   GITHUB_RUN_ID $GITHUB_RUN_ID GITHUB_RUN_NUMBER $GITHUB_RUN_NUMBER"
@@ -131,13 +126,14 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.9
         with:
-          versionSpec: '5.x'
+          versionSpec: "5.x"
 
       - name: Display GitVersion config
+        id: gitversion
         uses: gittools/actions/gitversion/execute@v0.9.9
         with:
           useConfigFile: true
-          additionalArguments: '/updateprojectfiles'
+          additionalArguments: "/updateprojectfiles"
 
       - name: Display GitVersion outputs
         run: |
@@ -178,7 +174,6 @@ jobs:
         run: cd src &&  dotnet publish -c Release -r $RuntimeIdentifier -p:PublishSingleFile=true --self-contained true  -o ../publish/$RuntimeIdentifier
         env:
           RuntimeIdentifier: ${{ matrix.RuntimeIdentifier }}
-          MINVERBUILDMETADATA: ${{github.run_id}}
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
@@ -188,7 +183,7 @@ jobs:
           path: ./publish/${{matrix.RuntimeIdentifier}}/*
 
   build-cd-upload:
-    needs: [build-ci,build-cd-publish]
+    needs: [build-cd-publish]
     #if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
@@ -210,13 +205,39 @@ jobs:
         shell: pwsh
         env:
           publishdir: ./publish
-          prefix: ${{ github.event.inputs.name }}
-          version:  ${{ needs.build-ci.outputs.semVer }}
+          version: ${{ needs.build-cd-publish.outputs.semVer }}
+
+      # - uses: "marvinpinto/action-automatic-releases@latest"
+      #   with:
+      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     automatic_release_tag: "preview-${{ needs.build-cd-publish.outputs.semVer }}"
+      #     title: "preview v${{ needs. build-cd-publish.outputs.semVer }}"
+      #     prerelease: true
+      #     files: ./publish/*.zip
 
       - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ needs.build-cd-publish.outputs.PreReleaseLabel != '' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "preview"
-          title: "Auto Build ${{ needs.build-ci.outputs.semVer }}"
+          automatic_release_tag: "${{ needs.build-cd-publish.outputs.PreReleaseLabel }}-v${{ needs.build-cd-publish.outputs.semVer }}"
+          title: "v${{ needs.build-cd-publish.outputs.semVer }}"
           prerelease: true
+          files: ./publish/*.zip
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ needs.build-cd-publish.outputs.PreReleaseLabel == '' &&  github.ref != 'refs/heads/main' }}
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "v${{ needs.build-cd-publish.outputs.semVer }}"
+          title: "v${{ needs.build-cd-publish.outputs.semVer }}"
+          prerelease: true
+          files: ./publish/*.zip
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ needs.build-cd-publish.outputs.PreReleaseLabel == '' &&  github.ref == 'refs/heads/main' }}
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "v${{ needs.build-cd-publish.outputs.semVer }}"
+          title: "v${{ needs.build-cd-publish.outputs.semVer }}"
+          prerelease: false
           files: ./publish/*.zip
