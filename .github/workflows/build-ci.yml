@@ -1,33 +1,35 @@
-name: build-ci
+# name: build-ci
 
-on:
-  push:
-    branches:
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.gitignore"
-      - "**/*.gitattributes"
+# on:
+#   push:
+#     branches:
+#      - "*"
+
+#     paths-ignore:
+#       - "**/*.md"
+#       - "**/*.gitignore"
+#       - "**/*.gitattributes"
       
-  workflow_dispatch:
+#   workflow_dispatch:
 
 
-jobs:
-  build-ci:
-    runs-on: ubuntu-latest
+# jobs:
+#   build-ci:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+#     steps:
+#       - name: Checkout source
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 0
           
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
+#       - name: Setup .NET
+#         uses: actions/setup-dotnet@v1
+#         with:
+#           dotnet-version: 5.0.x
 
-      - name: Restore dependencies
-        run: cd src && dotnet restore
+#       - name: Restore dependencies
+#         run: cd src && dotnet restore
 
-      - name: Build
-        run: cd src && dotnet build --no-restore
+#       - name: Build
+#         run: cd src && dotnet build --no-restore

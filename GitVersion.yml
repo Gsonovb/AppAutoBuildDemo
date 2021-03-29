@@ -1,0 +1,10 @@
+next-version: 1.8
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatchTag
+mode: ContinuousDelivery
+branches:
+  develop:
+    mode: ContinuousDelivery
+ignore:
+  sha: []
+merge-message-formats: {}

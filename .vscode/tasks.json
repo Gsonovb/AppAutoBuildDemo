@@ -37,6 +37,17 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "git version Update Configuration",
+            "type": "shell",
+            "command": "dotnet-gitversion",
+            "args": ["init"] ,
+            
+            "options": {
+                 "cwd": "${workspaceFolder}"
+            }
+
         }
     ]
 }
