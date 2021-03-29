@@ -96,7 +96,7 @@ jobs:
 
     #windows-latest
     #if you publish has windows ,you need use Windows image to build, that output file has metedata ,eg fileversion.
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     outputs:
       semVer: ${{ steps.gitversion.outputs.semVer }}
