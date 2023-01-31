@@ -20,7 +20,7 @@ on:
       includePrerelease:
         description: Include pre-release versions when matching a version.
         required: false
-        default: false
+        default: "false"
 
 jobs:
   build-ci:
@@ -32,9 +32,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 7.0.x
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.9
