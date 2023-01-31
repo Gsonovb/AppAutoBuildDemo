@@ -14,13 +14,9 @@
 
   <PropertyGroup>
     <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
-     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
-     
-     <MinVerBuildMetadata></MinVerBuildMetadata>
-     <MinVerVerbosity>detailed</MinVerVerbosity>
-  </PropertyGroup>
-
-  <PropertyGroup>
+    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
+    <MinVerBuildMetadata>0</MinVerBuildMetadata>
+    <MinVerVerbosity>detailed</MinVerVerbosity>
     <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
